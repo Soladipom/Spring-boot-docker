@@ -1,0 +1,92 @@
+                                                          ### Frontend Deployment ###
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-deployment
+  namespace: reactns
+  labels:
+    app: react-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: react-deployment
+  template:
+    metadata:
+      labels:
+        app: react-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: react-frontend 
+        image: collens4/reactapp:1
+        # env:
+        # - name: STRIPE_PUBLISHABLE_KEY
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: frontend-secret
+        #       key: STRIPE_PUBLISHABLE_KEY
+        #       optional: false
+        # imagePullPolicy: Always
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 80
+        #     host: 157.230.76.149
+        #     scheme: HTTP
+        #   initialDelaySeconds: 300
+        #   periodSeconds: 30
+        # resources:
+        #   requests:
+        #   #memory request
+        #     memory: 25Mi
+        ports:
+        - containerPort: 3000
+---
+                                                            ### Frontend Service ###
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-service
+  labels:
+    app: react-deployment
+  namespace: reactns
+spec:
+  type: LoadBalancer
+  ports: 
+    - name: react
+      port: 80
+      targetPort: 3000
+    - name: react-ssl
+      port: 443
+      targetPort: 3000
+  selector:
+    app: react-deployment
+---
+                                                            ### Frontend HPA ###
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: react-hpa
+  namespace: reactns
+spec:
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 10
+      policies:
+      - type: Percent
+        value: 30
+        periodSeconds: 60
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: react-deployment
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 85
