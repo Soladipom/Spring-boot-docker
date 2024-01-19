@@ -18,10 +18,11 @@ node{
     }
     
     stage('Push Docker Image'){
-        withCredentials([string(credentialsId: 'docker', variable: 'docker')]) {
-          sh "docker login -u moladipos -p ${docker}"
+	withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
+        sh "docker login -u moladipos -p ${docker}"
+	sh 'docker push moladipos/mymain1:latest'
         }
-        sh 'docker push moladipos/mymain1:latest'
+        
      }
      
      stage("Deploy To Kuberates Cluster"){
