@@ -14,7 +14,7 @@ node{
     
     stage('Build Docker Image'){
         sh 'docker build -t moladipos/mymain1 .'
-	sh 'docker tag moladipos/mymain1:latest'
+	sh 'docker tag moladipos/mymain1 moladipos/mymain1:latest'
     }
     
     stage('Push Docker Image'){
