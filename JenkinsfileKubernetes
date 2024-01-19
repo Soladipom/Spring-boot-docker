@@ -11,32 +11,18 @@ node{
       
     } 
     
-    
-    stage('Build Docker Image'){
-        sh 'docker build -t moladipos/mymain1 .'
-	sh 'docker tag moladipos/mymain1 moladipos/mymain1:latest'
-    }
-    
-    stage('Push Docker Image'){
-	withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
-        sh "docker login -u moladipos -p ${docker}"
-	sh 'docker push moladipos/mymain1:latest'
+    stage("Docker Build & Push"){
+      withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
+      sh "docker build -t moladipos/mymain1 ."
+      sh "docker tag moladipos/mymain1 moladipos/mymain1:latest"
+      sh "docker push moladipos/mymain1:latest"
         }
-        
-     }
+    }
      
-     stage("Deploy To Kuberates Cluster"){
-       kubernetesDeploy(
-         configs: 'springBootMongo.yml', 
-         kubeconfigId: 'KUBERNATES_CONFIG',
-         enableConfigSubstitution: true
-        )
-     }
-
-      stage("Deploy To Kuberates Cluster"){
-        sh 'kubectl apply -f springapp.yml'
-      }
+    stage('Deploy to kubernetes'){
+      withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+      sh 'kubectl apply -f springapp.yml'
+        }
+    }
      
 }
-
-
