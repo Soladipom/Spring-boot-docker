@@ -14,8 +14,8 @@ node{
     stage("Docker Build & Push"){
       withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
       sh "docker build -t moladipos/mymain1 ."
-      sh "docker tag moladipos/mymain1 moladipos/mymain1:6"
-      sh "docker push moladipos/mymain1:6"
+      sh "docker tag moladipos/mymain1 moladipos/mymain1:7"
+      sh "docker push moladipos/mymain1:7"
         }
     }
      
