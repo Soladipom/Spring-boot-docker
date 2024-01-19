@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: springappcontainer
-        image: moladipos/mymain1:6
+        image: moladipos/mymain1:7
         ports:
         - containerPort: 8080
         env:
