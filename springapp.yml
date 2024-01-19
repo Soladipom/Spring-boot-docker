@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: springappcontainer
-        image: moladipos/mymain1:8
+        image: 516207934632.dkr.ecr.us-east-1.amazonaws.com/springbootapp:latest
         ports:
         - containerPort: 8080
         env:
