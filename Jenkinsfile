@@ -21,7 +21,7 @@ node{
        }
      }
      stage('deploy to k8s cluster') {
-       withAWS(credentials: 'moladipoawscred', region: 'us-west-1'){
+       withAWS(credentials: 'moladipoawscred', region: 'us-east-2'){
        echo 'deployment into kubernetes cluster'
        sh 'kubectl apply -f springapp.yml'
         }
