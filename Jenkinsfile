@@ -12,7 +12,7 @@ node{
     } 
     
      stage('deploy to ECR') {
-         withAWS(credentials: 'moladipoawscred', region: 'us-east-1'){
+       withAWS(credentials: 'moladipoawscred', region: 'us-east-1'){
            echo 'deploying docker image to aws ecr...'
            sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 516207934632.dkr.ecr.us-east-1.amazonaws.com'
            sh 'docker build -t springbootapp .'
@@ -20,10 +20,10 @@ node{
            sh 'docker push 516207934632.dkr.ecr.us-east-1.amazonaws.com/springbootapp:latest'
        }
      }
-     
-    stage('Deploy to kubernetes'){
-      withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
-      sh 'kubectl apply -f springapp.yml'
+     stage('deploy to k8s cluster') {
+       withAWS(credentials: 'moladipoawscred', region: 'us-east-1'){
+       echo 'deployment into kubernetes cluster'
+       sh 'kubectl apply -f springapp.yml'
         }
     }
      
